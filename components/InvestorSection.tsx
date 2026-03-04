@@ -65,10 +65,9 @@ function MockDealFlow({ inView }: { inView: boolean }) {
       style={{
         background: '#0a0a0a',
         border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: '12px',
+        borderRadius: '14px',
         padding: '1.5rem',
         width: '100%',
-        maxWidth: '420px',
       }}
     >
       {/* Header */}
@@ -78,108 +77,201 @@ function MockDealFlow({ inView }: { inView: boolean }) {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '1.25rem',
+          paddingBottom: '1rem',
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
         }}
       >
-        <span
+        <div>
+          <span
+            style={{
+              fontSize: '11px',
+              fontFamily: 'var(--font-jetbrains)',
+              color: '#555',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              display: 'block',
+              marginBottom: '2px',
+            }}
+          >
+            Your Deal Flow
+          </span>
+          <span style={{ fontSize: '12px', color: '#333', fontFamily: 'var(--font-jetbrains)' }}>
+            4 founders · thesis matched
+          </span>
+        </div>
+        <div
           style={{
             fontSize: '11px',
+            color: '#c8ff00',
             fontFamily: 'var(--font-jetbrains)',
-            color: '#555',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
+            background: 'rgba(200,255,0,0.08)',
+            border: '1px solid rgba(200,255,0,0.2)',
+            borderRadius: '4px',
+            padding: '4px 10px',
           }}
         >
-          Your Deal Flow
-        </span>
-        <span
-          style={{
-            fontSize: '11px',
-            color: '#333',
-            fontFamily: 'var(--font-jetbrains)',
-          }}
-        >
-          Thesis matched
-        </span>
+          ✓ AI filtered
+        </div>
       </div>
 
-      {/* Founder rows */}
-      {MOCK_FOUNDERS.map((founder: MockFounder, i: number) => (
-        <motion.div
-          key={founder.name}
-          initial={{ opacity: 0, y: 10 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, delay: 0.4 + i * 0.1, ease: EASE }}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '10px 12px',
-            marginBottom: '6px',
-            borderRadius: '8px',
-            background: founder.isTopMatch
-              ? 'rgba(200,255,0,0.04)'
-              : 'rgba(255,255,255,0.02)',
-            border: founder.isTopMatch
-              ? '1px solid rgba(200,255,0,0.15)'
-              : '1px solid rgba(255,255,255,0.04)',
-          }}
-        >
-          {/* Left: avatar + name + sector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      {/* Founder cards */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {MOCK_FOUNDERS.map((founder: MockFounder, i: number) => (
+          <motion.div
+            key={founder.name}
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.45, delay: 0.35 + i * 0.1, ease: EASE }}
+            style={{
+              padding: '1.125rem 1.25rem',
+              borderRadius: '10px',
+              background: founder.isTopMatch ? 'rgba(200,255,0,0.04)' : '#0d0d0d',
+              border: founder.isTopMatch
+                ? '1px solid rgba(200,255,0,0.18)'
+                : '1px solid rgba(255,255,255,0.05)',
+              position: 'relative',
+            }}
+          >
+            {founder.isTopMatch && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  fontSize: '9px',
+                  fontFamily: 'var(--font-jetbrains)',
+                  color: '#c8ff00',
+                  background: 'rgba(200,255,0,0.12)',
+                  border: '1px solid rgba(200,255,0,0.25)',
+                  borderRadius: '3px',
+                  padding: '2px 7px',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Top match
+              </div>
+            )}
+
+            {/* Top row: avatar + name + Q-Score */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '0.875rem' }}>
+              {/* Avatar */}
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  background: '#181818',
+                  border: `1px solid ${founder.isTopMatch ? 'rgba(200,255,0,0.2)' : 'rgba(255,255,255,0.08)'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '15px',
+                  fontFamily: 'var(--font-jetbrains)',
+                  color: founder.isTopMatch ? '#c8ff00' : '#555',
+                  fontWeight: 700,
+                  flexShrink: 0,
+                }}
+              >
+                {initials(founder.name)}
+              </div>
+
+              {/* Name + badges */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#ededed', marginBottom: '5px' }}>
+                  {founder.fullName}
+                </div>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontFamily: 'var(--font-jetbrains)',
+                      color: '#555',
+                      background: '#111',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      borderRadius: '3px',
+                      padding: '2px 7px',
+                    }}
+                  >
+                    {founder.sector}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontFamily: 'var(--font-jetbrains)',
+                      color: '#444',
+                      background: '#111',
+                      border: '1px solid rgba(255,255,255,0.05)',
+                      borderRadius: '3px',
+                      padding: '2px 7px',
+                    }}
+                  >
+                    {founder.stage}
+                  </span>
+                </div>
+              </div>
+
+              {/* Q-Score badge */}
+              <div style={{ textAlign: 'center', flexShrink: 0 }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-jetbrains)',
+                    fontSize: '28px',
+                    fontWeight: 700,
+                    color: founder.isTopMatch ? '#c8ff00' : '#ededed',
+                    lineHeight: 1,
+                  }}
+                >
+                  {founder.qScore}
+                </div>
+                <div style={{ fontSize: '9px', color: '#333', fontFamily: 'var(--font-jetbrains)', marginTop: '3px', letterSpacing: '0.06em' }}>
+                  Q-SCORE
+                </div>
+              </div>
+            </div>
+
+            {/* Strength */}
             <div
               style={{
-                width: '30px',
-                height: '30px',
-                borderRadius: '50%',
-                background: '#1a1a1a',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '11px',
-                fontFamily: 'var(--font-jetbrains)',
-                color: '#555',
-                fontWeight: 600,
-                flexShrink: 0,
+                fontSize: '12px',
+                color: '#666',
+                fontStyle: 'italic',
+                marginBottom: '0.75rem',
+                paddingLeft: '2px',
               }}
             >
-              {initials(founder.name)}
+              &ldquo;{founder.topStrength}&rdquo;
             </div>
-            <div>
-              <div style={{ fontSize: '13px', color: '#ededed', fontWeight: 500 }}>
-                {founder.name}
+
+            {/* Bottom row: raise + artifacts + agent + match */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '10px', flex: 1, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-jetbrains)', color: '#444' }}>
+                  Raising <span style={{ color: '#888', fontWeight: 600 }}>{founder.raise}</span>
+                </span>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-jetbrains)', color: '#333' }}>·</span>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-jetbrains)', color: '#444' }}>
+                  <span style={{ color: '#888', fontWeight: 600 }}>{founder.artifacts}</span> artifacts
+                </span>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-jetbrains)', color: '#333' }}>·</span>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-jetbrains)', color: '#444' }}>
+                  via <span style={{ color: '#555' }}>{founder.primaryAgent}</span>
+                </span>
               </div>
               <div
                 style={{
-                  fontSize: '10px',
-                  color: '#444',
                   fontFamily: 'var(--font-jetbrains)',
-                  letterSpacing: '0.05em',
-                  marginTop: '1px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: founder.isTopMatch ? '#c8ff00' : '#888',
                 }}
               >
-                {founder.sector}
+                {founder.matchPct}% match
               </div>
             </div>
-          </div>
-
-          {/* Right: Q-Score + match */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span
-              style={{
-                fontFamily: 'var(--font-jetbrains)',
-                fontSize: '14px',
-                fontWeight: 700,
-                color: founder.isTopMatch ? '#c8ff00' : '#ededed',
-              }}
-            >
-              Q{founder.qScore}
-            </span>
-            <span style={{ fontSize: '11px', color: '#444' }}>
-              {founder.matchPct}% match
-            </span>
-          </div>
-        </motion.div>
-      ))}
+          </motion.div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -268,7 +360,7 @@ export function InvestorSection() {
           initial={{ opacity: 0, x: 40 }}
           animate={rightInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.7, ease: EASE }}
-          className="flex justify-center md:justify-center"
+          style={{ width: '100%' }}
         >
           <MockDealFlow inView={rightInView} />
         </motion.div>
