@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Q_SCORE_TARGET, Q_SCORE_LABEL, DIMENSIONS, EASE } from '@/lib/constants'
 import { useCountUp } from '@/hooks/useCountUp'
@@ -9,9 +9,39 @@ const RADIUS = 54
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const FILLED_OFFSET = CIRCUMFERENCE * (1 - Q_SCORE_TARGET / 100)
 
+// 18 deterministic particles — no Math.random()
+const PARTICLE_COUNT = 18
+const PARTICLES = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+  const angle = (i / PARTICLE_COUNT) * 2 * Math.PI
+  const distance = 55 + (i % 3) * 18
+  return {
+    id: i,
+    x: Math.cos(angle) * distance,
+    y: Math.sin(angle) * distance,
+    size: i % 2 === 0 ? 3 : 2,
+  }
+})
+
+const DIMENSION_TOOLTIPS: Record<string, string> = {
+  Market: 'TAM ≥ $1B, growing 20%+ YoY. Strong timing signal.',
+  Product: 'MVP shipped, clear product-market fit signals in interviews.',
+  GTM: 'Outbound motion defined. CAC:LTV ratio within acceptable range.',
+  Financial: 'Healthy unit economics. Runway > 12 months. Clean cap table.',
+  Team: 'Technical co-founder present. Some advisor gaps noted.',
+  Traction: 'MoM growth 15%, retention 68%. Leading indicators strong.',
+}
+
 export function QScoreSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const inView = useInView(sectionRef, { once: true, amount: 0.35 })
+  const [scoreComplete, setScoreComplete] = useState(false)
+  const [hoveredDim, setHoveredDim] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!inView) return
+    const t = setTimeout(() => setScoreComplete(true), 1600)
+    return () => clearTimeout(t)
+  }, [inView])
 
   const { ref: counterRef, displayValue } = useCountUp({
     target: Q_SCORE_TARGET,
@@ -47,7 +77,7 @@ export function QScoreSection() {
             {/* Score + gauge */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
               {/* SVG Gauge */}
-              <div style={{ flexShrink: 0 }}>
+              <div style={{ flexShrink: 0, position: 'relative' }}>
                 <svg
                   width="140"
                   height="140"
@@ -83,12 +113,38 @@ export function QScoreSection() {
                     }}
                   />
                 </svg>
+
+                {/* Particle burst */}
+                {scoreComplete && (
+                  <div
+                    aria-hidden="true"
+                    style={{ position: 'absolute', top: '50%', left: '50%', pointerEvents: 'none' }}
+                  >
+                    {PARTICLES.map((p) => (
+                      <motion.div
+                        key={p.id}
+                        initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                        animate={{ x: p.x, y: p.y, opacity: 0, scale: 0 }}
+                        transition={{ duration: 0.7, ease: 'easeOut' }}
+                        style={{
+                          position: 'absolute',
+                          width: p.size,
+                          height: p.size,
+                          borderRadius: '50%',
+                          background: '#c8ff00',
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Score number */}
               <div>
                 <div
                   ref={counterRef as React.RefObject<HTMLDivElement>}
+                  className={scoreComplete ? 'score-glitch' : ''}
                   style={{
                     fontSize: 'clamp(64px, 9vw, 112px)',
                     fontFamily: 'var(--font-jetbrains)',
@@ -135,7 +191,7 @@ export function QScoreSection() {
             </motion.p>
           </div>
 
-          {/* Right — dimension bars */}
+          {/* Right — dimension bars with tooltips */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {DIMENSIONS.map((dim, i) => (
               <motion.div
@@ -143,6 +199,9 @@ export function QScoreSection() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={inView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.5, delay: 1.8 + i * 0.1, ease: EASE }}
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setHoveredDim(dim.label)}
+                onMouseLeave={() => setHoveredDim(null)}
               >
                 <div
                   style={{
@@ -150,15 +209,17 @@ export function QScoreSection() {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     marginBottom: '6px',
+                    cursor: 'default',
                   }}
                 >
                   <span
                     style={{
                       fontSize: '12px',
                       fontWeight: 500,
-                      color: '#888',
+                      color: hoveredDim === dim.label ? '#ededed' : '#888',
                       textTransform: 'uppercase',
                       letterSpacing: '0.08em',
+                      transition: 'color 150ms',
                     }}
                   >
                     {dim.label}
@@ -167,7 +228,8 @@ export function QScoreSection() {
                     style={{
                       fontSize: '13px',
                       fontFamily: 'var(--font-jetbrains)',
-                      color: '#555',
+                      color: hoveredDim === dim.label ? '#c8ff00' : '#555',
+                      transition: 'color 150ms',
                     }}
                   >
                     {dim.value}
@@ -182,12 +244,45 @@ export function QScoreSection() {
                   }}
                 >
                   <motion.div
-                    style={{ height: '100%', borderRadius: '2px', background: '#ededed' }}
+                    style={{
+                      height: '100%',
+                      borderRadius: '2px',
+                      background: hoveredDim === dim.label ? '#c8ff00' : '#ededed',
+                      transition: 'background 200ms',
+                    }}
                     initial={{ width: 0 }}
                     animate={inView ? { width: `${dim.value}%` } : { width: 0 }}
                     transition={{ duration: 0.8, delay: 2.0 + i * 0.1, ease: EASE }}
                   />
                 </div>
+
+                {/* Hover tooltip */}
+                {hoveredDim === dim.label && DIMENSION_TOOLTIPS[dim.label] && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.15 }}
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      marginTop: '6px',
+                      background: '#111',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: '6px',
+                      padding: '8px 12px',
+                      fontSize: '12px',
+                      color: '#666',
+                      lineHeight: 1.55,
+                      fontFamily: 'var(--font-jetbrains)',
+                      zIndex: 10,
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    {DIMENSION_TOOLTIPS[dim.label]}
+                  </motion.div>
+                )}
               </motion.div>
             ))}
           </div>

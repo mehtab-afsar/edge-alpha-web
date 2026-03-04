@@ -138,10 +138,17 @@ export function CTASection() {
               fontSize: '16px',
               textDecoration: 'none',
               letterSpacing: '0.01em',
-              transition: 'opacity 200ms ease',
+              transition: 'opacity 200ms ease, transform 80ms ease',
             }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = '0.85')}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = '1')}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLElement
+              el.style.opacity = '1'
+              el.style.transform = 'scale(1)'
+            }}
+            onMouseDown={(e) => ((e.currentTarget as HTMLElement).style.transform = 'scale(0.97)')}
+            onMouseUp={(e) => ((e.currentTarget as HTMLElement).style.transform = 'scale(1)')}
+            onClick={() => { try { navigator.vibrate?.(10) } catch (_) {} }}
           >
             Get Your Q-Score
           </a>

@@ -109,11 +109,27 @@
   left: 1rem;
 }
 
+/* ─── Glitch effect ──────────────────────────────────────────────────────── */
+@keyframes glitch {
+  0%, 84%, 100% { text-shadow: none; transform: none; }
+  85%  { text-shadow:  3px 0 #c8ff00, -3px 0 #ff3333; transform: translateX(2px); }
+  87%  { text-shadow: -3px 0 #c8ff00,  3px 0 #ff3333; transform: translateX(-2px); }
+  89%  { text-shadow:  2px 0 #ff3333;                  transform: translateX(1px); }
+  91%  { text-shadow: none; transform: none; }
+}
+
+.score-glitch {
+  animation: glitch 4s ease-in-out infinite;
+}
+
 /* ─── Reduced motion ─────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .score-glitch {
+    animation: none;
   }
 }
