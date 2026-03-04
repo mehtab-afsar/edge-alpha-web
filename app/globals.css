@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Variables ──────────────────────────────────────────────────────── */
+:root {
+  --lenis-scroll: 0;
+}
+
+/* ─── Base Reset ─────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    background: #050505;
+    color: #ededed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: auto; /* Lenis handles smooth scrolling */
+  }
+
+  body {
+    background: #050505;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body.cursor-active {
+    cursor: none;
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(200, 255, 0, 0.15);
+    color: #ededed;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #050505;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #444;
+  }
+
+  /* Focus visible — lime outline */
+  :focus-visible {
+    outline: 2px solid #c8ff00;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────────────────────────── */
+@layer utilities {
+  .container-px {
+    @apply px-6 lg:px-12;
+  }
+
+  .section-py {
+    @apply py-24 lg:py-32;
+  }
+
+  .max-container {
+    @apply max-w-container mx-auto;
+  }
+
+  .label-micro {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #c8ff00;
+  }
+
+  .mono {
+    font-family: var(--font-jetbrains), monospace;
+  }
+}
+
+/* ─── Skip to content ────────────────────────────────────────────────────── */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 1rem;
+  z-index: 9999;
+  background: #c8ff00;
+  color: #050505;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.skip-to-content:focus {
+  left: 1rem;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
