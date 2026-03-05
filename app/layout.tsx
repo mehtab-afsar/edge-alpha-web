@@ -41,6 +41,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: `history.scrollRestoration = 'manual'` }} />
       </head>
       <body className={`${inter.variable} ${jetbrains.variable} font-sans`}>
         <a href="#main-content" className="skip-to-content">
